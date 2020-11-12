@@ -2,8 +2,8 @@
 """Utilities for translating between dxf and native cadvas (.pkl) format"""
 import math
 import ezdxf
-from cadvas import geomcolor
-from cadvas import constrcolor
+from cadi import geomcolor
+from cadi import constrcolor
 
 def pnt_n_vctr_to_coef(pnt, vector):
     (u, v, w) = pnt
