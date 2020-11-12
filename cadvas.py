@@ -544,6 +544,35 @@ class Draw(AppShell.AppShell):
             infile = os.path.abspath(openfile)
             self.load(infile)
 
+    def fileImportc(self):
+        openfile = None
+        ftypes = [('DXF format', '*.dxf'),
+                  ('All files', '*')]
+        openfile = askopenfilename(filetypes=ftypes, 
+                                   defaultextension='.dxf')
+        if openfile:
+            infile = os.path.abspath(openfile)
+            self.loadc(infile)        
+    
+    def fileImportcn(self):
+        openfile = None
+        ftypes = [('DXF format', '*.dxf'),
+                  ('All files', '*')]
+        openfile = askopenfilename(filetypes=ftypes, 
+                                   defaultextension='.dxf')
+        if openfile:
+            infile = os.path.abspath(openfile)
+            self.loadcn(infile)        
+    
+    def fileImportn(self):
+        openfile = None
+        ftypes = [('DXF format', '*.dxf'),
+                  ('All files', '*')]
+        openfile = askopenfilename(filetypes=ftypes, defaultextension='.dxf')
+        if openfile:
+            infile = os.path.abspath(openfile)
+            self.loadn(infile)
+                        
     def fileSave(self):
         openfile = self.filename
         if openfile:
@@ -570,9 +599,17 @@ class Draw(AppShell.AppShell):
         if openfile:
             outfile = os.path.abspath(openfile)
             self.save(outfile)
-
+    
+    def fileExportnc(self):
+        ftypes = [('NC format', '*.nc'),
+                  ('All files', '*')]
+        openfile = asksaveasfilename(filetypes=ftypes,
+                                     defaultextension='.nc')
+        if openfile:
+            outfile = os.path.abspath(openfile)
+            self.savenc(outfile)
+    
     def save(self, file):
-
         drawlist = []
         for entity in self.curr.values():
             drawlist.append({entity.type: entity.get_attribs()})
@@ -590,6 +627,25 @@ class Draw(AppShell.AppShell):
         else:
             print("Save files of type {fext} not supported.")
 
+    def savenc(self, file):
+
+        drawlist = []
+        for entity in self.curr.values():
+            drawlist.append({entity.type: entity.get_attribs()})
+
+        fext = os.path.splitext(file)[-1]
+        if fext == '.nc':
+            import dxf
+            dxf.native2nc(drawlist, file)
+        elif fext == '.pkl':
+            with open(file, 'wb') as f:
+                pickle.dump(drawlist, f)
+            self.filename = file
+        elif not fext:
+            print("Please type entire filename, including extension.")
+        else:
+            print("Save files of type {fext} not supported.")
+            
     def load(self, file):
         """Load CAD data from file.
 
