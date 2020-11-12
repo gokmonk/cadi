@@ -110,3 +110,116 @@ def native2dxf(drawlist, dxf_filename):
                                ('width', 1.0)))
             msp.add_text(text, dxfattribs)
     dwg.saveas(dxf_filename)
+
+    
+def dxf2nativecn(filename):
+    """Generate a dictionary of {k=type: v=attribs} from dxf entities."""
+    drawlist = []
+    dwg = ezdxf.readfile(filename)
+
+    for e in dwg.modelspace():  # e = dxf entity
+        if e.dxftype() == 'CIRCLE':
+            coords = (e.dxf.center, e.dxf.radius)
+            drawlist.append({'gc': (coords, "blue")})
+        if e.dxftype() == 'POINT':
+            coords = (e.dxf.location, 0)
+            drawlist.append({'gc': (coords, "red")})
+
+    return drawlist
+
+
+def dxf2nativen(filename):
+    """Generate a dictionary of {k=type: v=attribs} from dxf entities."""
+
+    drawlist = []
+    dwg = ezdxf.readfile(filename)
+
+    for e in dwg.modelspace():  # e = dxf entity
+        if e.dxftype() == 'POINT':
+            coords = (e.dxf.location, 2.2222)
+            drawlist.append({'gc': (coords, "red")})
+    return drawlist
+
+
+def dxf2nativec(filename):
+    """Generate a dictionary of {k=type: v=attribs} from dxf entities."""
+
+    drawlist = []
+    dwg = ezdxf.readfile(filename)
+
+    for e in dwg.modelspace():  # e = dxf entity
+        if e.dxftype() == 'CIRCLE':
+            coords = (e.dxf.center, e.dxf.radius)
+            drawlist.append({'gc': (coords, "blue")})
+    return drawlist
+
+
+def native2nc(drawlist, dxf_filename):
+    """Generate .dxf file format from native CADvas drawing."""
+    file1 = open(dxf_filename,"w")
+    # Create a new DXF R2010 drawing
+    dwg = ezdxf.new('R2010')  # Official DXF version name: 'AC1024'
+    msp = dwg.modelspace()  # Create new model space
+    # Add new entities to the model space
+    for ent_dict in drawlist:
+        if 'cl' in ent_dict:
+            coords, color = ent_dict['cl']
+            pnt, vctr = coef_to_pnt_n_vctr(coords)
+            msp.add_xline(pnt, vctr)
+        if 'gl' in ent_dict:
+            (p0, p1), color = ent_dict['gl']
+            msp.add_line(p0, p1)
+        if 'gc' in ent_dict:
+            (center, radius), color = ent_dict['gc']
+            msp.add_circle(center, radius)
+        if 'ga' in ent_dict:
+            (center, radius, start, end), color = ent_dict['ga']
+            msp.add_arc(center, radius, start, end)
+        if 'tx' in ent_dict:
+            (coords, text, style, size, color) = ent_dict['tx']
+            dxfattribs = dict((('align_point', coords),
+                               ('halign', 2),
+                               ('height', size),
+                               ('insert', coords),
+                               ('layer', '0'),
+                               ('oblique', 0.0),
+                               ('paperspace', 0),
+                               ('rotation', 0.0),
+                               ('style', style),
+                               ('text', text),
+                               ('text_generation_flag', 0),
+                               ('valign', 2),
+                               ('width', 1.0)))
+            msp.add_text(text, dxfattribs)
+    # dwg.saveas(dxf_filename)
+    for e in msp:
+        if e.dxftype() == 'POINT':
+            print("POINT FOUND:")
+            # print(dir(e.dxf.dxfattribs))
+            # print(e.dxf.dxfattribs)
+            po1x = e.dxf.x
+            po1y = e.dxf.y
+            po1z = e.dxf.z
+            # print("GO","X" + "{:.4f}".format(p1x),"Y" + "{:.4f}".format(p1y),"Z" )
+            # print("G1","X" + "{:.4f}".format(p1x),"Y" + "{:.4f}".format(p1y),"Z" + str(p1z))
+            p1xg = float("{:.4f}".format(p1x))
+            p1yg = float("{:.4f}".format(p1y))
+            file1.write("G0 X%s Y%s Z- \n" % (str(p1xg), str(p1yg)))
+            file1.write("G1 X%s Y%s Z-5 \n" % (str(round(p1x, 4)), str(round(p1y, 4))))
+            # p1=e.dxf.start
+            # p2=e.dxf.end
+        elif e.dxftype() == 'CIRCLE':
+            # print("DXF CIRCLE FOUND:")
+            # print(dir(e.dxf))
+            p1x=e.dxf.center.x
+            p1y=e.dxf.center.y
+            p1z=e.dxf.center.z
+            p2=e.dxf.radius
+            # print("GO","X" + "{:.4f}".format(p1x),"Y" + "{:.4f}".format(p1y),"Z" )
+            # print("G1","X" + "{:.4f}".format(p1x),"Y" + "{:.4f}".format(p1y),"Z" + str(p1z))
+            p1xg = float("{:.4f}".format(p1x))
+            p1yg = float("{:.4f}".format(p1y))
+            file1.write("G0 X%s Y%s Z- \n" % (str(p1xg), str(p1yg)))
+            file1.write("G1 X%s Y%s Z-5 \n" % (str(round(p1x, 4)), str(round(p1y, 4))))
+        
+    
