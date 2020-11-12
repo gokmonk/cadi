@@ -35,8 +35,8 @@ import txtdialog
 import entities
 import pprint
 
-version = '0.5.2'
-date = 'Oct 6, 2019'
+version = '0.0.1'
+date = 'Now 11, 2020'
 
 geomcolor = 'white'     # color of geometry entities
 constrcolor = 'magenta' # color of construction entities
@@ -445,10 +445,16 @@ class Draw(AppShell.AppShell):
     
     usecommandarea  = 0
     appversion      = version
-    appname         = 'CADvas'
+    appname         = 'CADI'
     copyright       = 'Copyright GPL %s' % date
-    contactname     = 'Doug Blanding'
-    contactemail    = 'dblanding%sgmail%scom' % ('@', '.')
+    contactname     = 'gokmen imamoglu'
+    contactemail    = 'gokmenim%syahoo%scom' % ('@', '.')
+    
+    # appname         = 'CADvas'
+    # copyright       = 'Copyright GPL %s' % date
+    # contactname     = 'Doug Blanding'
+    # contactemail    = 'dblanding%sgmail%scom' % ('@', '.')
+    
     frameWidth      = 840
     frameHeight     = 600
     catchCntr = False
