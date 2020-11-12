@@ -645,6 +645,107 @@ class Draw(AppShell.AppShell):
             print("Please type entire filename, including extension.")
         else:
             print("Save files of type {fext} not supported.")
+
+    def loadc(self, file):
+        """Load CAD data from file.
+
+        Data is saved/loaded as a list of dicts, one dict for each
+        drawing entity, {key=entity_type: val=entity_attribs} """
+        
+        fext = os.path.splitext(file)[-1]
+        if fext == '.dxf':
+            import dxf
+            drawlist = dxf.dxf2nativec(file)
+        elif fext == '.pkl':
+            with open(file, 'rb') as f:
+                drawlist = pickle.load(f)
+            self.filename = file
+        else:
+            print("Load files of type {fext} not supported.")
+        for ent_dict in drawlist:
+            if 'cl' in ent_dict:
+                attribs = ent_dict['cl']
+                e = entities.CL(attribs)
+                self.cline_gen(e.coords)  # This method takes coords
+            elif 'cc' in ent_dict:
+                attribs = ent_dict['cc']
+                e = entities.CC(attribs)
+                self.cline_gen(e)
+            elif 'gl' in ent_dict:
+                attribs = ent_dict['gl']
+                e = entities.GL(attribs)
+                self.gline_gen(e)
+            elif 'gc' in ent_dict:
+                attribs = ent_dict['gc']
+                e = entities.GC(attribs)
+                self.gcirc_gen(e)
+            elif 'ga' in ent_dict:
+                attribs = ent_dict['ga']
+                e = entities.GA(attribs)
+                self.garc_gen(e)
+            elif 'dl' in ent_dict:
+                attribs = ent_dict['dl']
+                e = entities.DL(attribs)
+                self.dim_gen(e)
+            elif 'tx' in ent_dict:
+                attribs = ent_dict['tx']
+                print(attribs)
+                e = entities.TX(attribs)
+                self.text_gen(e)
+        self.view_fit()
+        self.save_delta()  # undo/redo thing            
+            
+            
+            
+    def loadn(self, file):
+        """Load CAD data from file.
+
+        Data is saved/loaded as a list of dicts, one dict for each
+        drawing entity, {key=entity_type: val=entity_attribs} """
+        
+        fext = os.path.splitext(file)[-1]
+        if fext == '.dxf':
+            import dxf
+            drawlist = dxf.dxf2nativen(file)
+        elif fext == '.pkl':
+            with open(file, 'rb') as f:
+                drawlist = pickle.load(f)
+            self.filename = file
+        else:
+            print("Load files of type {fext} not supported.")
+        for ent_dict in drawlist:
+            if 'cl' in ent_dict:
+                attribs = ent_dict['cl']
+                e = entities.CL(attribs)
+                self.cline_gen(e.coords)  # This method takes coords
+            elif 'cc' in ent_dict:
+                attribs = ent_dict['cc']
+                e = entities.CC(attribs)
+                self.cline_gen(e)
+            elif 'gl' in ent_dict:
+                attribs = ent_dict['gl']
+                e = entities.GL(attribs)
+                self.gline_gen(e)
+            elif 'gc' in ent_dict:
+                attribs = ent_dict['gc']
+                e = entities.GC(attribs)
+                self.gcirc_gen(e)
+            elif 'ga' in ent_dict:
+                attribs = ent_dict['ga']
+                e = entities.GA(attribs)
+                self.garc_gen(e)
+            elif 'dl' in ent_dict:
+                attribs = ent_dict['dl']
+                e = entities.DL(attribs)
+                self.dim_gen(e)
+            elif 'tx' in ent_dict:
+                attribs = ent_dict['tx']
+                print(attribs)
+                e = entities.TX(attribs)
+                self.text_gen(e)
+        self.view_fit()
+        self.save_delta()  # undo/redo thing
+
             
     def load(self, file):
         """Load CAD data from file.
@@ -790,7 +891,7 @@ class Draw(AppShell.AppShell):
     #=======================================================================
     # GUI configuration
     #=======================================================================
- 
+     
     def createBase(self):
         self.toolbar = self.createcomponent('toolbar', (), None,
                   Frame, (self.interior(),), background="gray80")
@@ -814,18 +915,18 @@ class Draw(AppShell.AppShell):
 
     def createMenus(self):
         self.menuBar.deletemenuitems('File', 0)
-        self.menuBar.addmenuitem('File', 'command', 'Print drawing',
-                                 label='Print', command=self.printps)
-        self.menuBar.addmenuitem('File', 'command', 'Open drawing',
-                                 label='Open...', command=self.fileOpen)
-        self.menuBar.addmenuitem('File', 'command', 'Save drawing',
-                                 label='Save', command=self.fileSave)
-        self.menuBar.addmenuitem('File', 'command', 'Save drawing',
-                                 label='SaveAs...', command=self.fileSaveas)
-        self.menuBar.addmenuitem('File', 'command', 'Import DXF',
-                                 label='Import DXF', command=self.fileImport)
-        self.menuBar.addmenuitem('File', 'command', 'Export DXF',
-                                 label='Export DXF', command=self.fileExport)
+        # self.menuBar.addmenuitem('File', 'command', 'Print drawing', label='Print', command=self.printps)
+        # self.menuBar.addmenuitem('File', 'command', 'Open drawing',  label='Open...', command=self.fileOpen)
+        # self.menuBar.addmenuitem('File', 'command', 'Save drawing',  label='Save', command=self.fileSave)
+        # self.menuBar.addmenuitem('File', 'command', 'Save drawing',  label='SaveAs...', command=self.fileSaveas)
+        # self.menuBar.addmenuitem('File', 'command', 'Import DXF', label='Import DXF', command=self.fileImport)
+        # self.menuBar.addmenuitem('File', 'command', 'Export DXF', label='Export DXF', command=self.fileExport)
+        self.menuBar.addmenuitem('File', 'command', 'Import DXF', label='Import DXF', command=self.fileImport)
+        self.menuBar.addmenuitem('File', 'command', 'Circle DXF', label='Import Circle DXF', command=self.fileImportc)
+        self.menuBar.addmenuitem('File', 'command', 'Point DXF', label='Import Point DXF', command=self.fileImportn)
+        self.menuBar.addmenuitem('File', 'command', 'Export DXF', label='Export DXF', command=self.fileExport)
+        self.menuBar.addmenuitem('File', 'command', 'Export NC', label='Export NC', command=self.fileExportnc)
+
         self.menuBar.addmenuitem('File', 'separator')
         self.menuBar.addmenuitem('File', 'command', 'Exit program',
                                  label='Exit', command=self.quit)
@@ -841,84 +942,84 @@ class Draw(AppShell.AppShell):
         self.menuBar.addmenu('View', 'View commands')
         self.menuBar.addmenuitem('View', 'command', 'Fit geometry to screen',
                                  label='Fit', command=self.view_fit)
-        self.menuBar.addmenu('Units', 'Switch units')
-        self.menuBar.addmenuitem('Units', 'command', 'Set units=mm',
-                                 label='mm',
-                                 command=lambda k='mm': self.set_units(k))
-        self.menuBar.addmenuitem('Units', 'command', 'Set units=inches',
-                                 label='inches',
-                                 command=lambda k='inches': self.set_units(k))
-        self.menuBar.addmenuitem('Units', 'command', 'Set units=feet',
-                                 label='feet',
-                                 command=lambda k='feet': self.set_units(k))
-        self.menuBar.addmenu('Measure', 'Measure')
-        self.menuBar.addmenuitem('Measure', 'command', 'measure distance',
-                                 label='pt-pt distance', command=self.meas_dist)
-        self.menuBar.addmenuitem('Measure', 'command', 'print item coords',
-                                 label='item coords',
-                                 command=lambda k='itemcoords':self.dispatch(k))
-        self.menuBar.addmenuitem('Measure', 'command', 'print item length',
-                                 label='item length',
-                                 command=lambda k='itemlength':self.dispatch(k))
-        self.menuBar.addmenuitem('Measure', 'command', 'launch calculator',
-                                 label='calculator',
-                                 command=self.launch_calc)
-        self.menuBar.addmenu('Dimension', 'Dimensions')
-        self.menuBar.addmenuitem('Dimension', 'command', 'Horizontal dimension',
-                                 label='Dim Horizontal',
-                                 command=lambda k='dim_h':self.dispatch(k))
-        self.menuBar.addmenuitem('Dimension', 'command', 'Vertical dimension',
-                                 label='Dim Vertical',
-                                 command=lambda k='dim_v':self.dispatch(k))
-        self.menuBar.addmenuitem('Dimension', 'command', 'Parallel dimension',
-                                 label='Dim Parallel',
-                                 command=lambda k='dim_par':self.dispatch(k))
-        self.menuBar.addmenu('Text', 'Text')
-        self.menuBar.addmenuitem('Text', 'command', 'Enter text',
-                                 label='Create text',
-                                 command=lambda k='text_enter':self.dispatch(k))
-        self.menuBar.addmenuitem('Text', 'command', 'Move text',
-                                 label='Move text',
-                                 command=lambda k='text_move':self.dispatch(k))
-        self.menuBar.addmenuitem('Text', 'command', 'Edit Text',
-                                 label='Edit text',
-                                 command=self.txt_params)
+        # self.menuBar.addmenu('Units', 'Switch units')
+        # self.menuBar.addmenuitem('Units', 'command', 'Set units=mm',
+        #                          label='mm',
+        #                          command=lambda k='mm': self.set_units(k))
+        # self.menuBar.addmenuitem('Units', 'command', 'Set units=inches',
+        #                          label='inches',
+        #                          command=lambda k='inches': self.set_units(k))
+        # self.menuBar.addmenuitem('Units', 'command', 'Set units=feet',
+        #                          label='feet',
+        #                          command=lambda k='feet': self.set_units(k))
+        # self.menuBar.addmenu('Measure', 'Measure')
+        # self.menuBar.addmenuitem('Measure', 'command', 'measure distance',
+        #                          label='pt-pt distance', command=self.meas_dist)
+        # self.menuBar.addmenuitem('Measure', 'command', 'print item coords',
+        #                          label='item coords',
+        #                          command=lambda k='itemcoords':self.dispatch(k))
+        # self.menuBar.addmenuitem('Measure', 'command', 'print item length',
+        #                          label='item length',
+        #                          command=lambda k='itemlength':self.dispatch(k))
+        # self.menuBar.addmenuitem('Measure', 'command', 'launch calculator',
+        #                          label='calculator',
+        #                          command=self.launch_calc)
+        # self.menuBar.addmenu('Dimension', 'Dimensions')
+        # self.menuBar.addmenuitem('Dimension', 'command', 'Horizontal dimension',
+        #                          label='Dim Horizontal',
+        #                          command=lambda k='dim_h':self.dispatch(k))
+        # self.menuBar.addmenuitem('Dimension', 'command', 'Vertical dimension',
+        #                          label='Dim Vertical',
+        #                          command=lambda k='dim_v':self.dispatch(k))
+        # self.menuBar.addmenuitem('Dimension', 'command', 'Parallel dimension',
+        #                          label='Dim Parallel',
+        #                          command=lambda k='dim_par':self.dispatch(k))
+        # self.menuBar.addmenu('Text', 'Text')
+        # self.menuBar.addmenuitem('Text', 'command', 'Enter text',
+        #                          label='Create text',
+        #                          command=lambda k='text_enter':self.dispatch(k))
+        # self.menuBar.addmenuitem('Text', 'command', 'Move text',
+        #                          label='Move text',
+        #                          command=lambda k='text_move':self.dispatch(k))
+        # self.menuBar.addmenuitem('Text', 'command', 'Edit Text',
+        #                          label='Edit text',
+        #                          command=self.txt_params)
         self.menuBar.addmenu('Delete', 'Delete drawing elements')
         self.menuBar.addmenuitem('Delete', 'command',
                                  'Delete individual element',
                                  label='Del Element',
                                  command=lambda k='del_el':self.dispatch(k))
         self.menuBar.addmenuitem('Delete', 'separator')
-        self.menuBar.addmenuitem('Delete', 'command', 'Delete all construct',
-                                 label='All Cons', command=self.del_all_c)
+        # self.menuBar.addmenuitem('Delete', 'command', 'Delete all construct',
+        #                          label='All Cons', command=self.del_all_c)
         self.menuBar.addmenuitem('Delete', 'command', 'Delete all geometry',
                                  label='All Geom', command=self.del_all_g)
-        self.menuBar.addmenuitem('Delete', 'command', 'Delete all dimensions',
-                                 label='All Dims', command=self.del_all_d)
-        self.menuBar.addmenuitem('Delete', 'command', 'Delete all text',
-                                 label='All Text', command=self.del_all_t)
+        # self.menuBar.addmenuitem('Delete', 'command', 'Delete all dimensions',
+        #                          label='All Dims', command=self.del_all_d)
+        # self.menuBar.addmenuitem('Delete', 'command', 'Delete all text',
+        #                          label='All Text', command=self.del_all_t)
         self.menuBar.addmenuitem('Delete', 'separator')
         self.menuBar.addmenuitem('Delete', 'command', 'Delete all',
                                  label='Delete All', command=self.del_all)
-        self.menuBar.addmenu('Debug', 'Debug')
-        self.menuBar.addmenuitem('Debug', 'command', 'Show self.op',
-                                 label='Show self.op',
-                                 command=self.show_op)
-        self.menuBar.addmenuitem('Debug', 'command', 'Show Curr',
-                                 label='Show Curr',
-                                 command=lambda k='show_curr':self.dispatch(k))
-        self.menuBar.addmenuitem('Debug', 'command', 'Show Prev',
-                                 label='Show Prev',
-                                 command=lambda k='show_prev':self.dispatch(k))
-        self.menuBar.addmenuitem('Debug', 'command', 'Show Undo',
-                                 label='Show Undo',
-                                 command=lambda k='show_undo':self.dispatch(k))
-        self.menuBar.addmenuitem('Debug', 'command', 'Show Redo',
-                                 label='Show Redo',
-                                 command=lambda k='show_redo':self.dispatch(k))
-        self.menuBar.addmenuitem('Debug', 'command', 'Show ZoomScale',
-                                 label='Show Zoom Scale',
-                                 command=lambda k='show_zoomscale':self.dispatch(k))
+        # self.menuBar.addmenu('Debug', 'Debug')
+        # self.menuBar.addmenuitem('Debug', 'command', 'Show self.op',
+        #                          label='Show self.op',
+        #                          command=self.show_op)
+        # self.menuBar.addmenuitem('Debug', 'command', 'Show Curr',
+        #                          label='Show Curr',
+        #                          command=lambda k='show_curr':self.dispatch(k))
+        # self.menuBar.addmenuitem('Debug', 'command', 'Show Prev',
+        #                          label='Show Prev',
+        #                          command=lambda k='show_prev':self.dispatch(k))
+        # self.menuBar.addmenuitem('Debug', 'command', 'Show Undo',
+        #                          label='Show Undo',
+        #                          command=lambda k='show_undo':self.dispatch(k))
+        # self.menuBar.addmenuitem('Debug', 'command', 'Show Redo',
+        #                          label='Show Redo',
+        #                          command=lambda k='show_redo':self.dispatch(k))
+        # self.menuBar.addmenuitem('Debug', 'command', 'Show ZoomScale',
+        #                          label='Show Zoom Scale',
+        #                          command=lambda k='show_zoomscale':self.dispatch(k))
         
 
     def createTools(self):
