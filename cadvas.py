@@ -992,8 +992,8 @@ class Draw(AppShell.AppShell):
         self.menuBar.addmenuitem('Delete', 'separator')
         # self.menuBar.addmenuitem('Delete', 'command', 'Delete all construct',
         #                          label='All Cons', command=self.del_all_c)
-        self.menuBar.addmenuitem('Delete', 'command', 'Delete all geometry',
-                                 label='All Geom', command=self.del_all_g)
+        # self.menuBar.addmenuitem('Delete', 'command', 'Delete all geometry',
+        #                          label='All Geom', command=self.del_all_g)
         # self.menuBar.addmenuitem('Delete', 'command', 'Delete all dimensions',
         #                          label='All Dims', command=self.del_all_d)
         # self.menuBar.addmenuitem('Delete', 'command', 'Delete all text',
@@ -1092,7 +1092,7 @@ class Draw(AppShell.AppShell):
         AppShell.AppShell.createInterface(self)
         self.createMenus()
         self.createBase()
-        self.createTools()
+        # self.createTools()
         self.canvas.move_can(60,420)    # Put 0,0 near lower left corner
 
     #=======================================================================
