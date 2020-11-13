@@ -2,10 +2,10 @@
 <h3>2D CAD using Python</h3>
 <p>Read more info at https://dblanding.github.io/cadvas/
 
-personal modifications to cadvas 
-to generate and modify visualy 
-export to nc code from dxf entities 
-circle and point for a simple diy cnc
+<p>personal modifications to cadvas 
+<p>to generate and modify visualy 
+<p>export to nc code from dxf entities 
+<p>circle and point for a simple diy cnc
 
 pip install mathplot
 pip install pmw
