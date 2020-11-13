@@ -995,7 +995,7 @@ class Draw(AppShell.AppShell):
                                  'Delete individual element',
                                  label='Del Element',
                                  command=lambda k='del_el':self.dispatch(k))
-        self.menuBar.addmenuitem('Delete', 'separator')
+        # self.menuBar.addmenuitem('Delete', 'separator')
         # self.menuBar.addmenuitem('Delete', 'command', 'Delete all construct',
         #                          label='All Cons', command=self.del_all_c)
         # self.menuBar.addmenuitem('Delete', 'command', 'Delete all geometry',
